@@ -2,7 +2,6 @@ package rbtree
 
 import (
 	"fmt"
-	"strings"
 )
 
 type RBTree struct {
@@ -181,31 +180,40 @@ func FindSubarrays(seq []float64, T, e float64) [][2]int {
 	return results
 }
 
+// 最终正确版本
 func (t *RBTree) PrintTree() {
 	if t.root == t.nilNode {
 		fmt.Println("Empty Red-Black Tree")
 		return
 	}
 	fmt.Println("Red-Black Tree Structure:")
-	t.printNode(t.root, 0)
+	t.printNode(t.root, "", true)
 }
 
-// 递归打印节点细节
-func (t *RBTree) printNode(node *Node, depth int) {
+func (t *RBTree) printNode(node *Node, prefix string, isTail bool) {
 	if node == t.nilNode {
 		return
 	}
-	indent := strings.Repeat("  ", depth)
+
+	newPrefix := prefix
+	if isTail {
+		fmt.Printf("%s└── ", prefix)
+		newPrefix += "    "
+	} else {
+		fmt.Printf("%s├── ", prefix)
+		newPrefix += "│   "
+	}
+
 	colorStr := "RED"
-	if node.color == BLACK {
+	if !node.color {
 		colorStr = "BLACK"
 	}
 	parentKey := "nil"
 	if node.parent != t.nilNode {
 		parentKey = fmt.Sprintf("%.2f", node.parent.key)
 	}
-	fmt.Printf("%s[%.2f] %s (Parent: %s)\n", 
-		indent, node.key, colorStr, parentKey)
-	t.printNode(node.left, depth+1)
-	t.printNode(node.right, depth+1)
+	fmt.Printf("[%.2f] %s (Parent: %s)\n", node.key, colorStr, parentKey)
+
+	t.printNode(node.left, newPrefix, false)
+	t.printNode(node.right, newPrefix, true)
 }
