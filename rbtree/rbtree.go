@@ -1,5 +1,10 @@
 package rbtree
 
+import (
+	"fmt"
+	"strings"
+)
+
 type RBTree struct {
 	root    *Node
 	nilNode *Node
@@ -174,4 +179,33 @@ func FindSubarrays(seq []float64, T, e float64) [][2]int {
 	}
 
 	return results
+}
+
+func (t *RBTree) PrintTree() {
+	if t.root == t.nilNode {
+		fmt.Println("Empty Red-Black Tree")
+		return
+	}
+	fmt.Println("Red-Black Tree Structure:")
+	t.printNode(t.root, 0)
+}
+
+// 递归打印节点细节
+func (t *RBTree) printNode(node *Node, depth int) {
+	if node == t.nilNode {
+		return
+	}
+	indent := strings.Repeat("  ", depth)
+	colorStr := "RED"
+	if node.color == BLACK {
+		colorStr = "BLACK"
+	}
+	parentKey := "nil"
+	if node.parent != t.nilNode {
+		parentKey = fmt.Sprintf("%.2f", node.parent.key)
+	}
+	fmt.Printf("%s[%.2f] %s (Parent: %s)\n", 
+		indent, node.key, colorStr, parentKey)
+	t.printNode(node.left, depth+1)
+	t.printNode(node.right, depth+1)
 }
